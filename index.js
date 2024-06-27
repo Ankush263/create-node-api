@@ -15,10 +15,9 @@ const mongoJsAPI = new MongoJsAPI();
 
 const createFolder = async (path) => {
 	try {
-		const folderCreation = await fs.mkdir(path, { recursive: true });
-		console.log(`Directory created in ${folderCreation}`);
+		await fs.mkdir(path, { recursive: true });
 	} catch (error) {
-		console.error(error);
+		console.error('error: ', error);
 	}
 };
 
@@ -56,7 +55,7 @@ const createMongoJsApi = async () => {
 		mongoJsAPI.createDBFile();
 		mongoJsAPI.generateIndexFile();
 	} catch (error) {
-		console.error(error);
+		console.error('error: ', error);
 	}
 };
 

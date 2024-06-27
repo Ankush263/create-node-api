@@ -42,8 +42,10 @@ class MongoJsAPI {
 					console.error(error);
 					return;
 				}
-				console.log(stdout);
-				console.error(stderr);
+				if (stderr) {
+					console.error(stderr);
+					return;
+				}
 			}
 		);
 	}
@@ -65,8 +67,10 @@ class MongoJsAPI {
 					console.error(error);
 					return;
 				}
-				console.log(stdout);
-				console.error(stderr);
+				if (stderr) {
+					console.error(stderr);
+					return;
+				}
 			}
 		);
 	}
@@ -91,8 +95,10 @@ NODE_ENV=development
 					console.error(error);
 					return;
 				}
-				console.log(stdout);
-				console.error(stderr);
+				if (stderr) {
+					console.error(stderr);
+					return;
+				}
 			}
 		);
 	}
@@ -129,8 +135,10 @@ module.exports = app;`;
 					console.error(error);
 					return;
 				}
-				console.log(stdout);
-				console.error(stderr);
+				if (stderr) {
+					console.error(stderr);
+					return;
+				}
 			}
 		);
 	}
@@ -171,7 +179,6 @@ module.exports = connection;`;
 					console.error(stderr);
 					return;
 				}
-				console.log(stdout);
 			}
 		);
 	}
@@ -208,8 +215,10 @@ connection()
 					console.error(error);
 					return;
 				}
-				console.log(stdout);
-				console.error(stderr);
+				if (stderr) {
+					console.error(stderr);
+					return;
+				}
 			}
 		);
 	}
