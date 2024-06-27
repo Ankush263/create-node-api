@@ -24,11 +24,37 @@ const createFolder = async (path) => {
 
 const createMongoJsApi = async () => {
 	try {
-		const serverFolder = path.join(__dirname, 'server');
-		await createFolder(serverFolder);
+		const serverFolderPath = path.join(__dirname, 'server');
+		await createFolder(serverFolderPath);
 
 		mongoJsAPI.generatePackageFile();
 		mongoJsAPI.generateNodemonFile();
+		mongoJsAPI.generateEnvFile();
+
+		const srcFolderPath = path.join(__dirname, 'server', 'src');
+		await createFolder(srcFolderPath);
+
+		const controllerPath = path.join(__dirname, 'server', 'src', 'controllers');
+		await createFolder(controllerPath);
+
+		const dbPath = path.join(__dirname, 'server', 'src', 'db');
+		await createFolder(dbPath);
+
+		const middlewarePath = path.join(__dirname, 'server', 'src', 'middlewares');
+		await createFolder(middlewarePath);
+
+		const modelsPath = path.join(__dirname, 'server', 'src', 'models');
+		await createFolder(modelsPath);
+
+		const routesPath = path.join(__dirname, 'server', 'src', 'routes');
+		await createFolder(routesPath);
+
+		const utilsPath = path.join(__dirname, 'server', 'src', 'utils');
+		await createFolder(utilsPath);
+
+		mongoJsAPI.createAppFile();
+		mongoJsAPI.createDBFile();
+		mongoJsAPI.generateIndexFile();
 	} catch (error) {
 		console.error(error);
 	}
