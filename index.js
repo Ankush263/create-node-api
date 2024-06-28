@@ -4,9 +4,20 @@ const path = require('node:path');
 const MongoJsAPI = require('./helpers/mongo-js/index');
 
 //* node index.js <filePath(. OR ./src)> <language(--js OR --ts OR -javascript OR -typescript)>
+/*
+! Options
+*1 -> error handlers (-e=true/false)
+*2 -> security (-s=true/false)
+*3 -> auth (-a=true/false)
+*/
+
+//* node index.js . --js -e=true -s=true -a=true
 
 let filePath = '';
 let language = '';
+let errorHandle = false;
+let security = false;
+let auth = false;
 
 filePath = argv[2];
 language = argv[3];
@@ -19,12 +30,17 @@ const createFolder = async (path) => {
 	}
 };
 
-const createMongoJsApi = async () => {
+const createMongoJsApi = async (isError, isSecurity, isAuth) => {
 	try {
 		const serverFolderPath = path.join(__dirname, filePath, 'server');
 		await createFolder(serverFolderPath);
 
-		const mongoJsAPI = new MongoJsAPI(serverFolderPath);
+		const mongoJsAPI = new MongoJsAPI(
+			serverFolderPath,
+			isError,
+			isSecurity,
+			isAuth
+		);
 
 		mongoJsAPI.generatePackageFile();
 		mongoJsAPI.generateNodemonFile();
@@ -60,5 +76,15 @@ const createMongoJsApi = async () => {
 };
 
 if (!language || language === '--js' || language === '-javascript') {
-	createMongoJsApi();
+	if (argv[4] === '-e=true' || argv[5] === '-e=true' || argv[6] === '-e=true') {
+		errorHandle = true;
+	}
+	if (argv[4] === '-s=true' || argv[5] === '-s=true' || argv[6] === '-s=true') {
+		security = true;
+	}
+	if (argv[4] === '-a=true' || argv[5] === '-a=true' || argv[6] === '-a=true') {
+		auth = true;
+	}
+
+	createMongoJsApi(errorHandle, security, auth);
 }
