@@ -1,7 +1,9 @@
 const { exec } = require('node:child_process');
 
 class MongoJsAPI {
-	constructor() {}
+	constructor(projectPath) {
+		this.projectPath = projectPath;
+	}
 
 	generatePackageFile() {
 		const packageCommand = `{
@@ -34,7 +36,7 @@ class MongoJsAPI {
 
 		exec(
 			`
-				cd server 
+				cd ${this.projectPath} 
 				echo '${packageCommand}' > package.json
 			`,
 			(error, stdout, stderr) => {
@@ -59,7 +61,7 @@ class MongoJsAPI {
 
 		exec(
 			`
-      cd server 
+      cd ${this.projectPath} 
       echo '${nodemonCommand}' > nodemon.json
     `,
 			(error, stdout, stderr) => {
@@ -87,7 +89,7 @@ NODE_ENV=development
 
 		exec(
 			`
-      cd server 
+      cd ${this.projectPath} 
       echo '${envVariables}' > .env.example
     `,
 			(error, stdout, stderr) => {
@@ -126,7 +128,7 @@ module.exports = app;`;
 
 		exec(
 			`
-      cd server
+      cd ${this.projectPath}
       cd src
       echo "${appVariables}" > app.js
     `,
@@ -167,8 +169,8 @@ module.exports = connection;`;
 
 		exec(
 			`
-	mkdir -p server/src/db &&
-	echo '${escapedDbVariables}' > server/src/db/index.js
+	mkdir -p ${this.projectPath}/src/db &&
+	echo '${escapedDbVariables}' > ${this.projectPath}/src/db/index.js
 	`,
 			(error, stdout, stderr) => {
 				if (error) {
@@ -207,7 +209,7 @@ connection()
 
 		exec(
 			`
-      cd server
+      cd ${this.projectPath}
       echo "${indexVariable}" > index.js
     `,
 			(error, stdout, stderr) => {
