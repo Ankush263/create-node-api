@@ -26,6 +26,8 @@ class MongoJsAPI {
 		const express = '"express": "^4.19.2"';
 		const expressMongoSanitize = '"express-mongo-sanitize": "^2.2.0"';
 		const expressRateLimit = '"express-rate-limit": "^7.3.1"';
+		const helmet = '"helmet": "^7.1.0"';
+		const hpp = '"hpp": "^0.2.3"';
 		const jsonWebToken = '"jsonwebtoken": "^9.0.2"';
 		const mongoose = '"mongoose": "^8.4.1"';
 
@@ -36,6 +38,8 @@ class MongoJsAPI {
 		}    ${cors},\n    ${dotenv},\n    ${express},\n${
 			this.isSecurity ? `    ${expressMongoSanitize},\n` : ''
 		}${this.isSecurity ? `    ${expressRateLimit},\n` : ''}${
+			this.isSecurity ? `    ${helmet},\n` : ''
+		}${this.isSecurity ? `    ${hpp},\n` : ''}${
 			this.isAuth ? `    ${jsonWebToken},\n` : ''
 		}    ${mongoose}`;
 
@@ -93,14 +97,15 @@ class MongoJsAPI {
 	}
 
 	generateEnvFile() {
-		const envVariables = `MONGO_URI=
-JWT_SECRET=SomeVariable
-JWT_COOKIE_EXPIRES_IN=90
-JWT_EXPIRES_IN=82d
-PORT=8000
-NODE_ENV=development
+		const mongoUri = 'MONGO_URI=';
+		const jwtSecret = 'JWT_SECRET=';
+		const jwtExpire = 'JWT_EXPIRES_IN=';
+		const port = 'PORT=8000';
+		const environment = 'NODE_ENV=development';
 
-    `;
+		const envVariables = `${mongoUri}\n${this.isAuth ? `${jwtSecret}\n` : ''}${
+			this.isAuth ? `${jwtExpire}\n` : ''
+		}${port}\n${environment}`;
 
 		exec(
 			`
@@ -129,16 +134,32 @@ NODE_ENV=development
 		const requireExpress = "const express = require('express');\n";
 		const requireGlobalErrorHandler =
 			"const globalErrorHandler = require('./middlewares/global-error');\n";
+		const requireHelmet = "const helmet = require('helmet');\n";
+		const requireHpp = "const hpp = require('hpp');\n";
+		const requireExpressMongoSanitize =
+			"const mongoSanitize = require('express-mongo-sanitize');\n";
+		const requireRateLimit =
+			"const rateLimit = require('express-rate-limit');\n";
 
 		const defineApp = 'const app = express();';
 
 		const useCors = 'app.use(cors());\n';
+		const useHelmet = 'app.use(helmet());\n';
 		const useCookieParser = 'app.use(cookieParser());\n';
 		const useBodyParser = 'app.use(bodyParser.json());\n';
+		const useHpp = 'app.use(hpp());\n';
 		const useGlobalErrorHandler = 'app.use(globalErrorHandler);\n';
+		const useMongoSanitize = 'app.use(mongoSanitize());\n';
+
+		const setLimiter =
+			"const limiter = rateLimit({\n  windowMs: 15 * 60 * 1000,\n  limit: 100,\n  standardHeaders: 'draft-7',\n  legacyHeaders: false,\n})\n";
+
+		const useRateLimit = 'app.use(limiter);\n\n';
 
 		const handleWrongUrlError =
 			"\napp.all('*', (req, res, next) => {\n  next(new AppError('Cant find ' + req.originalUrl + ' on this server!!', 404));\n});\n";
+
+		const disableXPower = "app.disable('X-powered-by');\n\n";
 
 		const exportApp = 'module.exports = app;';
 
@@ -148,13 +169,25 @@ NODE_ENV=development
 			this.isAuth ? requireCookieParser : ''
 		}${requireCors}${requireExpress}${
 			this.isError ? requireGlobalErrorHandler : ''
+		}${this.isSecurity ? requireHelmet : ''}${
+			this.isSecurity ? requireHpp : ''
+		}${this.isSecurity ? requireExpressMongoSanitize : ''}${
+			this.isSecurity ? requireRateLimit : ''
 		}`;
 
 		const wrongUrlError = `${this.isError ? handleWrongUrlError : ''}`;
 
-		const allUseStatemants = `${useCors}${
+		const handleRateLimit = `${
+			this.isSecurity ? `${setLimiter}\n${useRateLimit}` : ''
+		}`;
+
+		const handleDisableXPoweredBy = `${this.isSecurity ? disableXPower : ''}`;
+
+		const allUseStatemants = `${useCors}${this.isSecurity ? useHelmet : ''}${
 			this.isAuth ? useCookieParser : ''
-		}${useBodyParser}${this.isError ? useGlobalErrorHandler : ''}`;
+		}${useBodyParser}${this.isSecurity ? useHpp : ''}${
+			this.isSecurity ? useMongoSanitize : ''
+		}${this.isError ? useGlobalErrorHandler : ''}`;
 
 		const appVariables =
 			allRequireStatements +
@@ -165,6 +198,8 @@ NODE_ENV=development
 			'\n' +
 			allUseStatemants +
 			'\n' +
+			handleRateLimit +
+			handleDisableXPoweredBy +
 			exportApp;
 
 		exec(
