@@ -69,6 +69,12 @@ const createMongoJsApi = async (isError, isSecurity, isAuth) => {
 
 		mongoJsAPI.createAppFile();
 		mongoJsAPI.createDBFile();
+		if (isError) {
+			mongoJsAPI.generateAppError();
+		}
+		if (isAuth) {
+			mongoJsAPI.generateCatchAsync();
+		}
 		mongoJsAPI.generateIndexFile();
 	} catch (error) {
 		console.error('error: ', error);
