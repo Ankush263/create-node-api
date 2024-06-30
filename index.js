@@ -1,7 +1,7 @@
 const { argv } = require('node:process');
 const fs = require('node:fs/promises');
 const path = require('node:path');
-const MongoJsAPI = require('./helpers/mongo-js/index');
+const MongoJsAPI = require('./helpers/index');
 
 //* node index.js <filePath(. OR ./src)> <language(--js OR --ts OR -javascript OR -typescript)>
 /*
@@ -74,6 +74,10 @@ const createMongoJsApi = async (isError, isSecurity, isAuth) => {
 		}
 		if (isAuth) {
 			mongoJsAPI.generateCatchAsync();
+			mongoJsAPI.generateUserModel();
+			mongoJsAPI.generateAuthControllers();
+			mongoJsAPI.generateAuthRouter();
+			mongoJsAPI.generateIndexRoutes();
 		}
 		mongoJsAPI.generateIndexFile();
 	} catch (error) {
