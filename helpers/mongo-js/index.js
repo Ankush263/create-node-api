@@ -30,6 +30,7 @@ class MongoJsAPI {
 		const hpp = '"hpp": "^0.2.3"';
 		const jsonWebToken = '"jsonwebtoken": "^9.0.2"';
 		const mongoose = '"mongoose": "^8.4.1"';
+		const validator = '"validator": "^13.12.0"';
 
 		const devNodemon = '"nodemon": "^3.1.3"';
 
@@ -41,7 +42,7 @@ class MongoJsAPI {
 			this.isSecurity ? `    ${helmet},\n` : ''
 		}${this.isSecurity ? `    ${hpp},\n` : ''}${
 			this.isAuth ? `    ${jsonWebToken},\n` : ''
-		}    ${mongoose}`;
+		}${this.isAuth ? `    ${validator},\n` : ''}    ${mongoose}`;
 
 		const devDependencies = `\n    ${devNodemon}`;
 
@@ -362,6 +363,8 @@ module.exports = catchAsync;`;
 			}
 		);
 	}
+
+	generateAuthControllers() {}
 }
 
 module.exports = MongoJsAPI;
