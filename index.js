@@ -1,17 +1,18 @@
 const { argv } = require('node:process');
+const CommonFilesJS = require('./common/js/index');
 const fs = require('node:fs/promises');
+const MongoJsAPI = require('./helpers/mongo/js/index');
 const path = require('node:path');
-const MongoJsAPI = require('./helpers/index');
 
 //* node index.js <filePath(. OR ./src)> <language(--js OR --ts OR -javascript OR -typescript)>
 /*
 ! Options
-*1 -> error handlers (-e=true/false)
-*2 -> security (-s=true/false)
-*3 -> auth (-a=true/false)
+*1 -> error handlers (-e)
+*2 -> security (-s)
+*3 -> auth (-a)
 */
 
-//* node index.js . --js -e=true -s=true -a=true
+//* node index.js . --js -e -s -a || node index.js ./output --js -esa
 
 let filePath = '';
 let language = '';
@@ -36,6 +37,13 @@ const createMongoJsApi = async (isError, isSecurity, isAuth) => {
 		await createFolder(serverFolderPath);
 
 		const mongoJsAPI = new MongoJsAPI(
+			serverFolderPath,
+			isError,
+			isSecurity,
+			isAuth
+		);
+
+		const commonJsFiles = new CommonFilesJS(
 			serverFolderPath,
 			isError,
 			isSecurity,
@@ -70,10 +78,10 @@ const createMongoJsApi = async (isError, isSecurity, isAuth) => {
 		mongoJsAPI.createAppFile();
 		mongoJsAPI.createDBFile();
 		if (isError) {
-			mongoJsAPI.generateAppError();
+			commonJsFiles.generateAppError();
 		}
 		if (isAuth) {
-			mongoJsAPI.generateCatchAsync();
+			commonJsFiles.generateCatchAsync();
 			mongoJsAPI.generateUserModel();
 			mongoJsAPI.generateAuthControllers();
 			mongoJsAPI.generateAuthRouter();
@@ -86,13 +94,13 @@ const createMongoJsApi = async (isError, isSecurity, isAuth) => {
 };
 
 if (!language || language === '--js' || language === '-javascript') {
-	if (argv[4] === '-e=true' || argv[5] === '-e=true' || argv[6] === '-e=true') {
+	if (argv.indexOf('-e') !== -1 || argv[argv.length - 1].includes('e')) {
 		errorHandle = true;
 	}
-	if (argv[4] === '-s=true' || argv[5] === '-s=true' || argv[6] === '-s=true') {
+	if (argv.indexOf('-s') !== -1 || argv[argv.length - 1].includes('s')) {
 		security = true;
 	}
-	if (argv[4] === '-a=true' || argv[5] === '-a=true' || argv[6] === '-a=true') {
+	if (argv.indexOf('-a') !== -1 || argv[argv.length - 1].includes('a')) {
 		auth = true;
 	}
 
