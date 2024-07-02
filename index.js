@@ -3,8 +3,9 @@ const CommonFilesJS = require('./common/js/index');
 const fs = require('node:fs/promises');
 const MongoJsAPI = require('./helpers/mongo/js/index');
 const path = require('node:path');
+const PgJsAPI = require('./helpers/pg/js/index');
 
-//* node index.js <filePath(. OR ./src)> <language(--js OR --ts OR -javascript OR -typescript)>
+//* node index.js <filePath(. OR ./src)> <-mongo/-pg> <language(--js OR --ts OR -javascript OR -typescript)>
 /*
 ! Options
 *1 -> error handlers (-e)
@@ -12,7 +13,7 @@ const path = require('node:path');
 *3 -> auth (-a)
 */
 
-//* node index.js . --js -e -s -a || node index.js ./output --js -esa
+//* node index.js . --js -pg -e -s -a || node index.js ./output -mongo --js -esa
 
 let filePath = '';
 let language = '';
@@ -21,13 +22,36 @@ let security = false;
 let auth = false;
 
 filePath = argv[2];
-language = argv[3];
+language = argv[4];
+
+const apiType = argv[3];
 
 const createFolder = async (path) => {
 	try {
 		await fs.mkdir(path, { recursive: true });
 	} catch (error) {
 		console.error('error: ', error);
+	}
+};
+
+const createCommonFolders = async (folderPath) => {
+	try {
+		const srcFolderPath = path.join(folderPath, 'src');
+		await createFolder(srcFolderPath);
+
+		const controllerPath = path.join(folderPath, 'src', 'controllers');
+		await createFolder(controllerPath);
+
+		const middlewarePath = path.join(folderPath, 'src', 'middlewares');
+		await createFolder(middlewarePath);
+
+		const routesPath = path.join(folderPath, 'src', 'routes');
+		await createFolder(routesPath);
+
+		const utilsPath = path.join(folderPath, 'src', 'utils');
+		await createFolder(utilsPath);
+	} catch (error) {
+		console.log(error);
 	}
 };
 
@@ -51,29 +75,16 @@ const createMongoJsApi = async (isError, isSecurity, isAuth) => {
 		);
 
 		mongoJsAPI.generatePackageFile();
-		mongoJsAPI.generateNodemonFile();
+		commonJsFiles.generateNodemonFile();
 		mongoJsAPI.generateEnvFile();
 
-		const srcFolderPath = path.join(serverFolderPath, 'src');
-		await createFolder(srcFolderPath);
-
-		const controllerPath = path.join(serverFolderPath, 'src', 'controllers');
-		await createFolder(controllerPath);
+		await createCommonFolders(serverFolderPath);
 
 		const dbPath = path.join(serverFolderPath, 'src', 'db');
 		await createFolder(dbPath);
 
-		const middlewarePath = path.join(serverFolderPath, 'src', 'middlewares');
-		await createFolder(middlewarePath);
-
 		const modelsPath = path.join(serverFolderPath, 'src', 'models');
 		await createFolder(modelsPath);
-
-		const routesPath = path.join(serverFolderPath, 'src', 'routes');
-		await createFolder(routesPath);
-
-		const utilsPath = path.join(serverFolderPath, 'src', 'utils');
-		await createFolder(utilsPath);
 
 		mongoJsAPI.createAppFile();
 		mongoJsAPI.createDBFile();
@@ -93,7 +104,18 @@ const createMongoJsApi = async (isError, isSecurity, isAuth) => {
 	}
 };
 
-if (!language || language === '--js' || language === '-javascript') {
+const createPgJsApi = async (isError, isSecurity, isAuth) => {
+	try {
+		const serverFolderPath = path.join(__dirname, filePath, 'server');
+		await createFolder(serverFolderPath);
+
+		await createCommonFolders(serverFolderPath);
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+const setStateOfAPI = () => {
 	if (argv.indexOf('-e') !== -1 || argv[argv.length - 1].includes('e')) {
 		errorHandle = true;
 	}
@@ -103,6 +125,22 @@ if (!language || language === '--js' || language === '-javascript') {
 	if (argv.indexOf('-a') !== -1 || argv[argv.length - 1].includes('a')) {
 		auth = true;
 	}
+};
+
+if (
+	apiType === '-mongo' &&
+	(!language || language === '--js' || language === '-javascript')
+) {
+	setStateOfAPI();
 
 	createMongoJsApi(errorHandle, security, auth);
+}
+
+if (
+	apiType === '-pg' &&
+	(!language || language === '--js' || language === '-javascript')
+) {
+	setStateOfAPI();
+
+	createPgJsApi(errorHandle, security, auth);
 }

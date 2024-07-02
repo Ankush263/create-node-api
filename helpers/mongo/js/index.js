@@ -75,31 +75,6 @@ class MongoJsAPI {
 		);
 	}
 
-	generateNodemonFile() {
-		const nodemonCommand = `{
-	"watch": ["src"],
-	"ext": ".js",
-	"exec": "node index.js"
-}`;
-
-		exec(
-			`
-      cd ${this.projectPath} 
-      echo '${nodemonCommand}' > nodemon.json
-    `,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
-			}
-		);
-	}
-
 	generateEnvFile() {
 		const mongoUri = 'MONGO_URI=';
 		const jwtSecret = 'JWT_SECRET=';
