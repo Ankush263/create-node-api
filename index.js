@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { argv } = require('node:process');
 const CommonFilesJS = require('./common/js/index');
 const fs = require('node:fs/promises');

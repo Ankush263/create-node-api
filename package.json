@@ -1,0 +1,14 @@
+{
+	"name": "create-node-api",
+	"version": "1.0.0",
+	"description": "CLI tool to generate a Node.js API boilerplate",
+	"main": "index.js",
+	"bin": {
+		"create-node-api": "./index.js"
+	},
+	"scripts": {
+		"start": "node index.js"
+	},
+	"author": "Ankush Banik",
+	"license": "ISC"
+}
