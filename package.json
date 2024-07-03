@@ -7,7 +7,7 @@
 		"create-node-api": "./index.js"
 	},
 	"scripts": {
-		"start": "node index.js"
+		"start": "node index.js ./output -mongo --js -esa"
 	},
 	"author": "Ankush Banik",
 	"license": "ISC"
