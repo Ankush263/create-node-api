@@ -90,6 +90,7 @@ const createMongoJsApi = async (isError, isSecurity, isAuth) => {
 		mongoJsAPI.createDBFile();
 		if (isError) {
 			commonJsFiles.generateAppError();
+			mongoJsAPI.generateGlobalErrorFile();
 		}
 		if (isAuth) {
 			commonJsFiles.generateCatchAsync();
@@ -109,7 +110,47 @@ const createPgJsApi = async (isError, isSecurity, isAuth) => {
 		const serverFolderPath = path.join(__dirname, filePath, 'server');
 		await createFolder(serverFolderPath);
 
+		const pgJsAPI = new PgJsAPI(serverFolderPath, isError, isSecurity, isAuth);
+
+		const commonJsFiles = new CommonFilesJS(
+			serverFolderPath,
+			isError,
+			isSecurity,
+			isAuth
+		);
+
+		pgJsAPI.generatePackageFile();
+		commonJsFiles.generateNodemonFile();
+		pgJsAPI.generateEnvFile();
+
 		await createCommonFolders(serverFolderPath);
+
+		const migrationPath = path.join(serverFolderPath, 'migration');
+		await createFolder(migrationPath);
+
+		const migrationDataPath = path.join(serverFolderPath, 'migration', 'data');
+		await createFolder(migrationDataPath);
+
+		const repoPath = path.join(serverFolderPath, 'src', 'repo');
+		await createFolder(repoPath);
+
+		const repoUtilPath = path.join(serverFolderPath, 'src', 'repo', 'utils');
+		await createFolder(repoUtilPath);
+
+		pgJsAPI.createAppFile();
+		pgJsAPI.createPoolFile();
+		pgJsAPI.createDataPoolFile();
+		pgJsAPI.createToCamelCaseFile();
+
+		if (isError) {
+			commonJsFiles.generateAppError();
+			pgJsAPI.generateGlobalErrorFile();
+		}
+
+		if (isAuth) {
+			commonJsFiles.generateCatchAsync();
+		}
+		pgJsAPI.generateIndexFile();
 	} catch (error) {
 		console.log(error);
 	}

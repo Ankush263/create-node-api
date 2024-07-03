@@ -79,12 +79,13 @@ class MongoJsAPI {
 		const mongoUri = 'MONGO_URI=';
 		const jwtSecret = 'JWT_SECRET=';
 		const jwtExpire = 'JWT_EXPIRES_IN=';
+		const cookiesExpire = 'JWT_COOKIE_EXPIRES_IN=';
 		const port = 'PORT=8000';
 		const environment = 'NODE_ENV=development';
 
 		const envVariables = `${mongoUri}\n${this.isAuth ? `${jwtSecret}\n` : ''}${
 			this.isAuth ? `${jwtExpire}\n` : ''
-		}${port}\n${environment}`;
+		}${this.isAuth ? `${cookiesExpire}\n` : ''}${port}\n${environment}`;
 
 		exec(
 			`
@@ -119,7 +120,7 @@ class MongoJsAPI {
 			"const mongoSanitize = require('express-mongo-sanitize');\n";
 		const requireRateLimit =
 			"const rateLimit = require('express-rate-limit');\n";
-		const requireRoute = "const routes = require('../src/routes/index');\n";
+		const requireRoute = "const routes = require('./routes/index');\n";
 
 		const defineApp = 'const app = express();';
 
@@ -499,6 +500,97 @@ module.exports = router;`;
 			`
 			mkdir -p ${this.projectPath}/src/routes &&
 			echo "${indexRouteVariable}" > ${this.projectPath}/src/routes/index.js
+		`,
+			(error, stdout, stderr) => {
+				if (error) {
+					console.error(error);
+					return;
+				}
+				if (stderr) {
+					console.error(stderr);
+					return;
+				}
+			}
+		);
+	}
+
+	generateGlobalErrorFile() {
+		const globalErrorVariable = `const AppError = require('../utils/appError');
+
+const handleCastErrorDB = (err) => {
+	const message = 'Invalid ' + err.path + ': ' + err.value;
+	return new AppError(message, 401);
+};
+
+const handleDuplicateFieldsDB = (err) => {
+	const value = Object.keys(err.keyValue)[0];
+	const message =
+		'Duplicate field value ' + value + ', Please use another value.';
+	return new AppError(message, 400);
+};
+
+const handleValidationErrorDB = (err) => {
+	const errors = Object.values(err.errors).map((el) => el.message);
+
+	const message = 'Invalid input data. ' + errors.join('. ');
+	return new AppError(message, 400);
+};
+
+const handleJWTError = (err) =>
+	new AppError('Invalid token, Please log in again', 401);
+
+const handleJWTExpiredError = (err) =>
+	new AppError('Your token has expired!, Please log in again', 401);
+
+const sendErrorDev = (err, res) => {
+	res.status(err.statusCode).json({
+		status: err.status,
+		error: err,
+		message: err.message,
+		stack: err.stack,
+	});
+};
+
+const sendErrorProd = (err, res) => {
+	if (err.isOperational) {
+		res.status(err.statusCode).json({
+			status: err.status,
+			message: err.message,
+		});
+	} else {
+		console.error('ERROR', err);
+		res.status(500).json({
+			status: 'error',
+			message: 'Something went very wrong!',
+		});
+	}
+};
+
+module.exports = (err, req, res, next) => {
+	err.statusCode = err.statusCode || 500;
+	err.status = err.status || 'error';
+
+	res.set('Access-Control-Allow-Origin', '*');
+
+	if (process.env.NODE_ENV === 'development') {
+		sendErrorDev(err, res);
+	} else if (process.env.NODE_ENV === 'production') {
+		let error = err;
+		if (error.name === 'CastError') error = handleCastErrorDB(error);
+		if (error.code === 11000) error = handleDuplicateFieldsDB(error);
+		if (error.name === 'ValidationError')
+			error = handleValidationErrorDB(error);
+		if (error.name === 'JsonWebTokenError') error = handleJWTError(error);
+		if (error.name === 'TokenExpiredError')
+			error = handleJWTExpiredError(error);
+		sendErrorProd(error, res);
+	}
+};`;
+
+		exec(
+			`
+			mkdir -p ${this.projectPath}/src/middlewares &&
+			echo "${globalErrorVariable}" > ${this.projectPath}/src/middlewares/global-error.js
 		`,
 			(error, stdout, stderr) => {
 				if (error) {
