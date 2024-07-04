@@ -1,14 +1,17 @@
 {
-	"name": "create-node-api",
+	"name": "create-n-e-api",
 	"version": "1.0.0",
 	"description": "CLI tool to generate a Node.js API boilerplate",
 	"main": "index.js",
 	"bin": {
-		"create-node-api": "./index.js"
+		"create-n-e-api": "./bin/index.js"
 	},
 	"scripts": {
-		"start": "node index.js ./output -mongo --js -esa"
+		"start": "node ./bin/index.js ./output -mongo --js -esa"
 	},
 	"author": "Ankush Banik",
-	"license": "ISC"
+	"license": "ISC",
+	"devDependencies": {
+		"parcel-bundler": "^1.12.5"
+	}
 }
