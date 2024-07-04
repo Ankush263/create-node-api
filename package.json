@@ -10,8 +10,5 @@
 		"start": "node index.js ./output -mongo --js -esa"
 	},
 	"author": "Ankush Banik",
-	"license": "ISC",
-	"devDependencies": {
-		"parcel-bundler": "^1.12.5"
-	}
+	"license": "ISC"
 }
