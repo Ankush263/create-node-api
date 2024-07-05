@@ -6,9 +6,24 @@
 	"bin": {
 		"create-n-e-app": "index.js"
 	},
+	"keywords": [
+		"create-n-e-app",
+		"create-n-e-api",
+		"create-node-express-api",
+		"api",
+		"node",
+		"express",
+		"create-api",
+		"create-mongo-api",
+		"create-pg-api"
+	],
 	"scripts": {
 		"start": "node index.js ./output -mongo --js -esa"
 	},
 	"author": "Ankush Banik",
-	"license": "ISC"
+	"license": "ISC",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Ankush263/create-node-api.git"
+	}
 }
