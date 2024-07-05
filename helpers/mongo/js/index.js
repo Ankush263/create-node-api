@@ -1,4 +1,5 @@
-const { exec } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
 
 class MongoJsAPI {
 	constructor(projectPath, isError, isSecurity, isAuth) {
@@ -57,22 +58,14 @@ class MongoJsAPI {
 			devDependencies.length > 0 ? `{  ${devDependencies}\n  }` : '{}'
 		}\n}`;
 
-		exec(
-			`
-				cd ${this.projectPath} 
-				echo '${packageCommand}' > package.json
-			`,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
+		const filePath = path.join(this.projectPath, 'package.json');
+
+		fs.writeFile(filePath, packageCommand, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
 			}
-		);
+		});
 	}
 
 	generateEnvFile() {
@@ -87,22 +80,14 @@ class MongoJsAPI {
 			this.isAuth ? `${jwtExpire}\n` : ''
 		}${this.isAuth ? `${cookiesExpire}\n` : ''}${port}\n${environment}`;
 
-		exec(
-			`
-      cd ${this.projectPath} 
-      echo '${envVariables}' > .env.example
-    `,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
+		const filePath = path.join(this.projectPath, '.env.example');
+
+		fs.writeFile(filePath, envVariables, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
 			}
-		);
+		});
 	}
 
 	createAppFile() {
@@ -143,7 +128,7 @@ class MongoJsAPI {
 
 		const disableXPower = "app.disable('X-powered-by');\n\n";
 
-		const exportApp = 'module.exports = app;';
+		const exportApp = 'module.exports = app;\n';
 
 		const allRequireStatements = `${
 			this.isError ? requireAppError : ''
@@ -187,23 +172,14 @@ class MongoJsAPI {
 			handleUseRoutes +
 			exportApp;
 
-		exec(
-			`
-      cd ${this.projectPath}
-      cd src
-      echo "${appVariables}" > app.js
-    `,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
+		const filePath = path.join(this.projectPath, 'src', 'app.js');
+
+		fs.writeFile(filePath, appVariables, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
 			}
-		);
+		});
 	}
 
 	createDBFile() {
@@ -224,26 +200,17 @@ const connection = async () => {
 	}
 };
 
-module.exports = connection;`;
+module.exports = connection;
+`;
 
-		const escapedDbVariables = dbVariables.replace(/'/g, "'\\''");
+		const filePath = path.join(this.projectPath, 'src', 'db', 'index.js');
 
-		exec(
-			`
-	mkdir -p ${this.projectPath}/src/db &&
-	echo '${escapedDbVariables}' > ${this.projectPath}/src/db/index.js
-	`,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
+		fs.writeFile(filePath, dbVariables, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
 			}
-		);
+		});
 	}
 
 	generateIndexFile() {
@@ -266,24 +233,17 @@ connection()
 	})
 	.catch((error) => {
 		throw new Error(error);
-	});`;
+	});
+	`;
 
-		exec(
-			`
-      cd ${this.projectPath}
-      echo "${indexVariable}" > index.js
-    `,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
+		const filePath = path.join(this.projectPath, 'index.js');
+
+		fs.writeFile(filePath, indexVariable, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
 			}
-		);
+		});
 	}
 
 	generateUserModel() {
@@ -314,24 +274,22 @@ const userSchema = new mongoose.Schema(
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;`;
+module.exports = User;
+`;
 
-		exec(
-			`
-			mkdir -p ${this.projectPath}/src/models &&
-			echo "${userModelVariable}" > ${this.projectPath}/src/models/user.model.js
-		`,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
-			}
+		const filePath = path.join(
+			this.projectPath,
+			'src',
+			'models',
+			'user.model.js'
 		);
+
+		fs.writeFile(filePath, userModelVariable, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
+			}
+		});
 	}
 
 	generateAuthControllers() {
@@ -439,24 +397,22 @@ const protect = catchAsync(async (req, res, next) => {
 	next();
 });
 
-module.exports = { signup, login, protect };`;
+module.exports = { signup, login, protect };
+`;
 
-		exec(
-			`
-			mkdir -p ${this.projectPath}/src/controllers &&
-			echo "${authControllersVariables}" > ${this.projectPath}/src/controllers/authControllers.js
-		`,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
-			}
+		const filePath = path.join(
+			this.projectPath,
+			'src',
+			'controllers',
+			'authControllers.js'
 		);
+
+		fs.writeFile(filePath, authControllersVariables, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
+			}
+		});
 	}
 
 	generateAuthRouter() {
@@ -468,24 +424,22 @@ const router = express.Router();
 router.route('/signup').post(signup);
 router.route('/login').post(login);
 
-module.exports = router;`;
+module.exports = router;
+`;
 
-		exec(
-			`
-			mkdir -p ${this.projectPath}/src/routes &&
-			echo "${authRouteVariable}" > ${this.projectPath}/src/routes/auth.routes.js
-		`,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
-			}
+		const filePath = path.join(
+			this.projectPath,
+			'src',
+			'routes',
+			'auth.routes.js'
 		);
+
+		fs.writeFile(filePath, authRouteVariable, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
+			}
+		});
 	}
 
 	generateIndexRoutes() {
@@ -494,24 +448,17 @@ const router = express.Router();
 
 router.use('/auth', require('./auth.routes'));
 
-module.exports = router;`;
+module.exports = router;
+`;
 
-		exec(
-			`
-			mkdir -p ${this.projectPath}/src/routes &&
-			echo "${indexRouteVariable}" > ${this.projectPath}/src/routes/index.js
-		`,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
+		const filePath = path.join(this.projectPath, 'src', 'routes', 'index.js');
+
+		fs.writeFile(filePath, indexRouteVariable, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
 			}
-		);
+		});
 	}
 
 	generateGlobalErrorFile() {
@@ -585,24 +532,22 @@ module.exports = (err, req, res, next) => {
 			error = handleJWTExpiredError(error);
 		sendErrorProd(error, res);
 	}
-};`;
+};
+`;
 
-		exec(
-			`
-			mkdir -p ${this.projectPath}/src/middlewares &&
-			echo "${globalErrorVariable}" > ${this.projectPath}/src/middlewares/global-error.js
-		`,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
-			}
+		const filePath = path.join(
+			this.projectPath,
+			'src',
+			'middlewares',
+			'global-error.js'
 		);
+
+		fs.writeFile(filePath, globalErrorVariable, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
+			}
+		});
 	}
 }
 

@@ -1,4 +1,5 @@
-const { exec } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
 
 class PgJsAPI {
 	constructor(projectPath, isError, isSecurity, isAuth) {
@@ -56,22 +57,14 @@ class PgJsAPI {
 			devDependencies.length > 0 ? `{  ${devDependencies}\n  }` : '{}'
 		}\n}`;
 
-		exec(
-			`
-				cd ${this.projectPath} 
-				echo '${packageCommand}' > package.json
-			`,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
+		const filePath = path.join(this.projectPath, 'package.json');
+
+		fs.writeFile(filePath, packageCommand, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
 			}
-		);
+		});
 	}
 
 	generateEnvFile() {
@@ -93,22 +86,14 @@ class PgJsAPI {
 			this.isAuth ? `${cookiesExpire}\n` : ''
 		}${port}\n\n${dbHost}\n${dbPort}\n${database}\n${user}\n${password}`;
 
-		exec(
-			`
-      cd ${this.projectPath} 
-      echo '${envVariables}' > .env.example
-    `,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
+		const filePath = path.join(this.projectPath, '.env.example');
+
+		fs.writeFile(filePath, envVariables, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
 			}
-		);
+		});
 	}
 
 	createAppFile() {
@@ -149,7 +134,7 @@ class PgJsAPI {
 
 		const disableXPower = "app.disable('X-powered-by');\n\n";
 
-		const exportApp = 'module.exports = app;';
+		const exportApp = 'module.exports = app;\n';
 
 		const allRequireStatements = `${
 			this.isError ? requireAppError : ''
@@ -193,23 +178,14 @@ class PgJsAPI {
 			handleUseRoutes +
 			exportApp;
 
-		exec(
-			`
-      cd ${this.projectPath}
-      cd src
-      echo "${appVariables}" > app.js
-    `,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
+		const filePath = path.join(this.projectPath, 'src', 'app.js');
+
+		fs.writeFile(filePath, appVariables, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
 			}
-		);
+		});
 	}
 
 	generateIndexFile() {
@@ -242,24 +218,17 @@ const connect = async () => {
 	}
 };
 
-connect();`;
+connect();
+`;
 
-		exec(
-			`
-      cd ${this.projectPath}
-      echo "${indexVariable}" > index.js
-    `,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
+		const filePath = path.join(this.projectPath, 'index.js');
+
+		fs.writeFile(filePath, indexVariable, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
 			}
-		);
+		});
 	}
 
 	createAppFile() {
@@ -296,7 +265,7 @@ connect();`;
 
 		const disableXPower = "app.disable('X-powered-by');\n\n";
 
-		const exportApp = 'module.exports = app;';
+		const exportApp = 'module.exports = app;\n';
 
 		const allRequireStatements = `${
 			this.isError ? requireAppError : ''
@@ -338,23 +307,14 @@ connect();`;
 			handleUseRoutes +
 			exportApp;
 
-		exec(
-			`
-      cd ${this.projectPath}
-      cd src
-      echo "${appVariables}" > app.js
-    `,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
+		const filePath = path.join(this.projectPath, 'src', 'app.js');
+
+		fs.writeFile(filePath, appVariables, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
 			}
-		);
+		});
 	}
 
 	createPoolFile() {
@@ -377,25 +337,17 @@ class Pool {
 	}
 }
 
-module.exports = new Pool();`;
+module.exports = new Pool();
+`;
 
-		exec(
-			`
-			cd ${this.projectPath}
-			cd src
-			echo "${poolVariables}" > pool.js
-			`,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
+		const filePath = path.join(this.projectPath, 'src', 'pool.js');
+
+		fs.writeFile(filePath, poolVariables, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
 			}
-		);
+		});
 	}
 
 	createDataPoolFile() {
@@ -410,25 +362,22 @@ const pool = new pg.Pool({
 	password: process.env.PASSWORD,
 });
 
-module.exports = pool;`;
+module.exports = pool;
+`;
 
-		exec(
-			`
-			cd ${this.projectPath}
-			cd migration/data
-			echo "${dataPoolVariable}" > pool.js
-			`,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
-			}
+		const filePath = path.join(
+			this.projectPath,
+			'migration',
+			'data',
+			'pool.js'
 		);
+
+		fs.writeFile(filePath, dataPoolVariable, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
+			}
+		});
 	}
 
 	createToCamelCaseFile() {
@@ -437,8 +386,8 @@ module.exports = pool;`;
 		const replaced = {};
 
 		for (let key in row) {
-			const camelCase = key.replace(/([-_][a-z])/gi, (\\$1) =>
-				\\$1.toUpperCase().replace('_', '')
+			const camelCase = key.replace(/([-_][a-z])/gi, ($1) =>
+				$1.toUpperCase().replace('_', '')
 			);
 			replaced[camelCase] = row[key];
 		}
@@ -447,25 +396,23 @@ module.exports = pool;`;
 	});
 };
 
-module.exports = toCamelCase;`;
+module.exports = toCamelCase;
+`;
 
-		exec(
-			`
-			cd ${this.projectPath}
-			cd src/repo/utils
-			echo "${toCamelCaseVariable.replace(/"/g, '\\"')}" > to-camel-case.js
-			`,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
-			}
+		const filePath = path.join(
+			this.projectPath,
+			'src',
+			'repo',
+			'utils',
+			'to-camel-case.js'
 		);
+
+		fs.writeFile(filePath, toCamelCaseVariable, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
+			}
+		});
 	}
 
 	generateGlobalErrorFile() {
@@ -538,24 +485,22 @@ module.exports = (err, req, res, next) => {
 
 		sendErrorProd(error, res);
 	}
-};`;
+};
+`;
 
-		exec(
-			`
-			mkdir -p ${this.projectPath}/src/middlewares &&
-			echo "${globalErrorVariable}" > ${this.projectPath}/src/middlewares/global-error.js
-		`,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
-			}
+		const filePath = path.join(
+			this.projectPath,
+			'src',
+			'middlewares',
+			'global-error.js'
 		);
+
+		fs.writeFile(filePath, globalErrorVariable, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
+			}
+		});
 	}
 }
 

@@ -1,4 +1,5 @@
-const { exec } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
 
 class CommonFilesJS {
 	constructor(projectPath, isError, isSecurity, isAuth) {
@@ -21,28 +22,21 @@ class CommonFilesJS {
 	}
 }
 
-module.exports = AppError;`;
+module.exports = AppError;
+`;
 
-		exec(
-			`
-			mkdir -p ${this.projectPath}/src/utils &&
-	    echo '${appErrorVariable}' > ${this.projectPath}/src/utils/appError.js
-    `,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
+		const filePath = path.join(this.projectPath, 'src', 'utils', 'appError.js');
+
+		fs.writeFile(filePath, appErrorVariable, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
 			}
-		);
+		});
 	}
 
 	generateCatchAsync() {
-		const appErrorVariable = `const catchAsync = (asyncFunction) => {
+		const catchAsyncVariables = `const catchAsync = (asyncFunction) => {
 	return (req, res, next) => {
 		asyncFunction(req, res, next).catch((err) => {
 			next(err);
@@ -50,24 +44,22 @@ module.exports = AppError;`;
 	};
 };
 
-module.exports = catchAsync;`;
+module.exports = catchAsync;
+`;
 
-		exec(
-			`
-			mkdir -p ${this.projectPath}/src/utils &&
-			echo '${appErrorVariable}' > ${this.projectPath}/src/utils/catchAsync.js
-		`,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
-			}
+		const filePath = path.join(
+			this.projectPath,
+			'src',
+			'utils',
+			'catchAsync.js'
 		);
+
+		fs.writeFile(filePath, catchAsyncVariables, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
+			}
+		});
 	}
 
 	generateNodemonFile() {
@@ -77,22 +69,14 @@ module.exports = catchAsync;`;
 	"exec": "node index.js"
 }`;
 
-		exec(
-			`
-      cd ${this.projectPath} 
-      echo '${nodemonCommand}' > nodemon.json
-    `,
-			(error, stdout, stderr) => {
-				if (error) {
-					console.error(error);
-					return;
-				}
-				if (stderr) {
-					console.error(stderr);
-					return;
-				}
+		const filePath = path.join(this.projectPath, 'nodemon.json');
+
+		fs.writeFile(filePath, nodemonCommand, (error) => {
+			if (error) {
+				console.error(`Error writing file: ${error}`);
+				return;
 			}
-		);
+		});
 	}
 }
 
