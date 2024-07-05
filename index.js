@@ -15,15 +15,15 @@ const PgJsAPI = require('./helpers/pg/js/index');
 *3 -> auth (-a)
 */
 
-//* node index.js . --js -pg -e -s -a || node index.js ./output -mongo --js -esa
+//* npx create-n-e-app my-app -pg --js -esa || npx create-n-e-app server -mongo --js -esa
 
-let filePath = '';
 let language = '';
+let apiName = '';
 let errorHandle = false;
 let security = false;
 let auth = false;
 
-filePath = argv[2];
+apiName = argv[2];
 language = argv[4];
 
 const apiType = argv[3];
@@ -59,7 +59,7 @@ const createCommonFolders = async (folderPath) => {
 
 const createMongoJsApi = async (isError, isSecurity, isAuth) => {
 	try {
-		const serverFolderPath = path.join(__dirname, filePath, 'server');
+		const serverFolderPath = path.join(__dirname, apiName);
 		await createFolder(serverFolderPath);
 
 		const mongoJsAPI = new MongoJsAPI(
@@ -109,7 +109,7 @@ const createMongoJsApi = async (isError, isSecurity, isAuth) => {
 
 const createPgJsApi = async (isError, isSecurity, isAuth) => {
 	try {
-		const serverFolderPath = path.join(__dirname, filePath, 'server');
+		const serverFolderPath = path.join(__dirname, apiName);
 		await createFolder(serverFolderPath);
 
 		const pgJsAPI = new PgJsAPI(serverFolderPath, isError, isSecurity, isAuth);
