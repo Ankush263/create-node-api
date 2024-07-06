@@ -18,7 +18,8 @@
 		"create-pg-api"
 	],
 	"scripts": {
-		"start": "node index.js ./output -mongo --js -esa"
+		"start:mongo-js": "node index.js ./output -mongo --js -esa",
+		"start:pg-js": "node index.js ./output -pg --js -esa"
 	},
 	"author": "Ankush Banik",
 	"license": "ISC",
