@@ -27,7 +27,7 @@ module.exports = AppError;
 
 		const filePath = path.join(this.projectPath, 'src', 'utils', 'appError.js');
 
-		fs.writeFile(filePath, appErrorVariable, (error) => {
+		fs.writeFileSync(filePath, appErrorVariable, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -54,7 +54,7 @@ module.exports = catchAsync;
 			'catchAsync.js'
 		);
 
-		fs.writeFile(filePath, catchAsyncVariables, (error) => {
+		fs.writeFileSync(filePath, catchAsyncVariables, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -71,7 +71,7 @@ module.exports = catchAsync;
 
 		const filePath = path.join(this.projectPath, 'nodemon.json');
 
-		fs.writeFile(filePath, nodemonCommand, (error) => {
+		fs.writeFileSync(filePath, nodemonCommand, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;

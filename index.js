@@ -59,7 +59,8 @@ const createCommonFolders = async (folderPath) => {
 
 const createMongoJsApi = async (isError, isSecurity, isAuth) => {
 	try {
-		const serverFolderPath = path.join(__dirname, apiName);
+		const currentDirectory = process.cwd();
+		const serverFolderPath = path.join(currentDirectory, apiName);
 		await createFolder(serverFolderPath);
 
 		const mongoJsAPI = new MongoJsAPI(
@@ -109,7 +110,8 @@ const createMongoJsApi = async (isError, isSecurity, isAuth) => {
 
 const createPgJsApi = async (isError, isSecurity, isAuth) => {
 	try {
-		const serverFolderPath = path.join(__dirname, apiName);
+		const currentDirectory = process.cwd();
+		const serverFolderPath = path.join(currentDirectory, apiName);
 		await createFolder(serverFolderPath);
 
 		const pgJsAPI = new PgJsAPI(serverFolderPath, isError, isSecurity, isAuth);

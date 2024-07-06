@@ -60,7 +60,7 @@ class MongoJsAPI {
 
 		const filePath = path.join(this.projectPath, 'package.json');
 
-		fs.writeFile(filePath, packageCommand, (error) => {
+		fs.writeFileSync(filePath, packageCommand, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -82,7 +82,7 @@ class MongoJsAPI {
 
 		const filePath = path.join(this.projectPath, '.env.example');
 
-		fs.writeFile(filePath, envVariables, (error) => {
+		fs.writeFileSync(filePath, envVariables, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -174,7 +174,7 @@ class MongoJsAPI {
 
 		const filePath = path.join(this.projectPath, 'src', 'app.js');
 
-		fs.writeFile(filePath, appVariables, (error) => {
+		fs.writeFileSync(filePath, appVariables, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -205,7 +205,7 @@ module.exports = connection;
 
 		const filePath = path.join(this.projectPath, 'src', 'db', 'index.js');
 
-		fs.writeFile(filePath, dbVariables, (error) => {
+		fs.writeFileSync(filePath, dbVariables, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -238,7 +238,7 @@ connection()
 
 		const filePath = path.join(this.projectPath, 'index.js');
 
-		fs.writeFile(filePath, indexVariable, (error) => {
+		fs.writeFileSync(filePath, indexVariable, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -284,7 +284,7 @@ module.exports = User;
 			'user.model.js'
 		);
 
-		fs.writeFile(filePath, userModelVariable, (error) => {
+		fs.writeFileSync(filePath, userModelVariable, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -407,7 +407,7 @@ module.exports = { signup, login, protect };
 			'authControllers.js'
 		);
 
-		fs.writeFile(filePath, authControllersVariables, (error) => {
+		fs.writeFileSync(filePath, authControllersVariables, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -434,7 +434,7 @@ module.exports = router;
 			'auth.routes.js'
 		);
 
-		fs.writeFile(filePath, authRouteVariable, (error) => {
+		fs.writeFileSync(filePath, authRouteVariable, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -453,7 +453,7 @@ module.exports = router;
 
 		const filePath = path.join(this.projectPath, 'src', 'routes', 'index.js');
 
-		fs.writeFile(filePath, indexRouteVariable, (error) => {
+		fs.writeFileSync(filePath, indexRouteVariable, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -542,7 +542,7 @@ module.exports = (err, req, res, next) => {
 			'global-error.js'
 		);
 
-		fs.writeFile(filePath, globalErrorVariable, (error) => {
+		fs.writeFileSync(filePath, globalErrorVariable, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;

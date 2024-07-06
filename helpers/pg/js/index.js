@@ -59,7 +59,7 @@ class PgJsAPI {
 
 		const filePath = path.join(this.projectPath, 'package.json');
 
-		fs.writeFile(filePath, packageCommand, (error) => {
+		fs.writeFileSync(filePath, packageCommand, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -88,7 +88,7 @@ class PgJsAPI {
 
 		const filePath = path.join(this.projectPath, '.env.example');
 
-		fs.writeFile(filePath, envVariables, (error) => {
+		fs.writeFileSync(filePath, envVariables, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -131,7 +131,7 @@ connect();
 
 		const filePath = path.join(this.projectPath, 'index.js');
 
-		fs.writeFile(filePath, indexVariable, (error) => {
+		fs.writeFileSync(filePath, indexVariable, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -217,7 +217,7 @@ connect();
 
 		const filePath = path.join(this.projectPath, 'src', 'app.js');
 
-		fs.writeFile(filePath, appVariables, (error) => {
+		fs.writeFileSync(filePath, appVariables, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -250,7 +250,7 @@ module.exports = new Pool();
 
 		const filePath = path.join(this.projectPath, 'src', 'pool.js');
 
-		fs.writeFile(filePath, poolVariables, (error) => {
+		fs.writeFileSync(filePath, poolVariables, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -280,7 +280,7 @@ module.exports = pool;
 			'pool.js'
 		);
 
-		fs.writeFile(filePath, dataPoolVariable, (error) => {
+		fs.writeFileSync(filePath, dataPoolVariable, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -315,7 +315,7 @@ module.exports = toCamelCase;
 			'to-camel-case.js'
 		);
 
-		fs.writeFile(filePath, toCamelCaseVariable, (error) => {
+		fs.writeFileSync(filePath, toCamelCaseVariable, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
@@ -403,7 +403,7 @@ module.exports = (err, req, res, next) => {
 			'global-error.js'
 		);
 
-		fs.writeFile(filePath, globalErrorVariable, (error) => {
+		fs.writeFileSync(filePath, globalErrorVariable, (error) => {
 			if (error) {
 				console.error(`Error writing file: ${error}`);
 				return;
