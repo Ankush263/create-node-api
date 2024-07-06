@@ -1,13 +1,13 @@
 {
-	"name": "create-n-e-app",
+	"name": "create-api-node-express",
 	"version": "1.0.0",
 	"description": "CLI tool to generate a Node.js API boilerplate",
 	"main": "index.js",
 	"bin": {
-		"create-n-e-app": "index.js"
+		"create-api-node-express": "index.js"
 	},
 	"keywords": [
-		"create-n-e-app",
+		"create-api-node-express",
 		"create-n-e-api",
 		"create-node-express-api",
 		"api",
