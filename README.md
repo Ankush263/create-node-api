@@ -3,6 +3,6 @@
 ## CLI tool to generate a Node.js API boilerplate
 
 ```
-npx create-api-node-express -mongo --js -esa
-npx create-api-node-express -pg --js -esa
+npx create-api-node-express <api-name> -mongo --js -esa
+npx create-api-node-express <api-name> -pg --js -esa
 ```
