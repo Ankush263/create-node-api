@@ -161,13 +161,22 @@ const createPgJsApi = async (isError, isSecurity, isAuth) => {
 };
 
 const setStateOfAPI = () => {
-	if (argv.indexOf('-e') !== -1 || argv[argv.length - 1].includes('e')) {
+	if (
+		argv.indexOf('-e') !== -1 ||
+		(argv.length > 5 && argv[argv.length - 1].includes('e'))
+	) {
 		errorHandle = true;
 	}
-	if (argv.indexOf('-s') !== -1 || argv[argv.length - 1].includes('s')) {
+	if (
+		argv.indexOf('-s') !== -1 ||
+		(argv.length > 5 && argv[argv.length - 1].includes('s'))
+	) {
 		security = true;
 	}
-	if (argv.indexOf('-a') !== -1 || argv[argv.length - 1].includes('a')) {
+	if (
+		argv.indexOf('-a') !== -1 ||
+		(argv.length > 5 && argv[argv.length - 1].includes('a'))
+	) {
 		auth = true;
 	}
 };
