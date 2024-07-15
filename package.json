@@ -1,6 +1,6 @@
 {
 	"name": "create-api-node-express",
-	"version": "3.1.1",
+	"version": "3.1.2",
 	"description": "CLI tool to generate a Node.js API boilerplate",
 	"main": "index.js",
 	"bin": {
