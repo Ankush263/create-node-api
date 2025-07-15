@@ -1,4 +1,4 @@
-# create-api-node-express
+# create-api-node-express.
 
 ## CLI tool to generate a Node.js API boilerplate
 
